@@ -1,20 +1,104 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
 
-// Ensure environment variables are loaded
 dotenv.config();
 
-// Validate OpenAI API key
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error(
-    "OpenAI API key is required. Please add OPENAI_API_KEY to your .env file"
-  );
+  throw new Error("OpenAI API key is required. Please add OPENAI_API_KEY to your .env file");
 }
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// services/openaiService.ts
+export const generateAIResponse = async (user, action = null) => {
+  try {
+    // Handle onboarding steps first
+    if (!user.name || user.name.trim() === "") {
+      return {
+        message: "Welcome! Please tell me your name to get started.",
+        actions: [{ label: "Enter Your Name", value: "enter_name", input: true }],
+      };
+    }
+
+    if (user.currentStep === 'age') {
+      return {
+        message: `Nice to meet you, ${user.name}! Please select your age group:`,
+        actions: getAgeGroupActions(),
+      };
+    }
+
+    if (user.currentStep === 'education') {
+      return {
+        message: "What's your education level?",
+        actions: getEducationActions(),
+      };
+    }
+
+    if (user.currentStep === 'privacy') {
+      return {
+        message: "Choose your privacy preference: Low, Medium, or High.",
+        actions: getPrivacyActions(),
+      };
+    }
+
+    // Handle regular conversation
+    let prompt = "";
+    if (action) {
+      // If it's a specific topic request
+      if (action.startsWith("topic_")) {
+        prompt = `Explain ${action.replace("topic_", "")} to ${user.name}, a ${user.age} with ${user.educationLevel} education level, 
+                  focusing on ${user.privacyLevel} privacy level. Keep it concise (3-4 sentences) and friendly.`;
+      } else {
+        // Handle other actions
+        prompt = `Respond to ${user.name}'s request about "${action}". 
+                  User details: Age ${user.age}, Education ${user.educationLevel}, 
+                  Privacy preference ${user.privacyLevel}. Keep response under 200 characters.`;
+      }
+    } else {
+      // Generic response for any input
+      prompt = `Respond to this message from ${user.name} (${user.age}, ${user.educationLevel} education, 
+                ${user.privacyLevel} privacy preference): "${action}". 
+                Keep it friendly and under 200 characters.`;
+    }
+
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "gpt-3.5-turbo",
+      max_tokens: 200,
+      temperature: 0.7,
+    });
+
+    const responseText = completion.choices[0].message.content;
+
+    // Return appropriate actions based on context
+    if (user.privacyLevel) {
+      return {
+        message: responseText,
+        actions: [
+          ...getPrivacyTopics(user.privacyLevel),
+          { label: "Update Profile", value: "update_profile" }
+        ]
+      };
+    }
+
+    return {
+      message: responseText,
+      actions: []
+    };
+
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    return {
+      message: "I apologize, but I'm having trouble generating a response right now. Please try again later.",
+      actions: [
+        { label: "Try Again", value: "retry" },
+        { label: "Update Profile", value: "update_profile" },
+      ],
+    };
+  }
+};
 const getAgeGroupActions = () => [
   { label: "Child (0-12)", value: "age_child" },
   { label: "Teen (13-19)", value: "age_teen" },
@@ -53,187 +137,4 @@ const getPrivacyTopics = (privacyLevel) => {
     ],
   };
   return topics[privacyLevel] || topics["Medium"];
-};
-
-// export const generateAIResponse = async (user, action = null) => {
-//   let prompt = "";
-//   let actions = [];
-
-//   if (
-//     !user.currentStep ||
-//     user.currentStep === "name" ||
-//     !user.name ||
-//     user.name === "Guest"
-//   ) {
-//     return {
-//       message:
-//         "Welcome! Before we begin, please note that we prioritize your privacy. We only collect essential information to provide personalized guidance. Your data is securely stored and never shared. Please tell me your name to get started.",
-//       actions: [],
-//     };
-//   }
-
-//   // if (!user.name || user.name === "Guest") {
-//   //   return {
-//   //     // message: "Welcome! Before we begin, please note that we prioritize your privacy. We only collect essential information to provide personalized guidance. Your data is securely stored and never shared. Please tell me your name to get started.",
-//   //     message: "Whats your name",
-//   //     actions: [{ label: "Enter Your Name", value: "enter_name", input: true }],
-//   //   };
-//   // }
-
-//   if (user.currentStep === "age") {
-//     return {
-//       message: "Please select your age group:",
-//       actions: getAgeGroupActions(),
-//     };
-//   }
-
-//   if (user.currentStep === "education") {
-//     return {
-//       message: "What's your education level?",
-//       actions: getEducationActions(),
-//     };
-//   }
-
-//   if (user.currentStep === "privacy") {
-//     return {
-//       message:
-//         "Choose your privacy preference. This helps us tailor our recommendations:\n\nLow: Basic online safety tips\nMedium: Enhanced privacy features\nHigh: Advanced security measures",
-//       actions: getPrivacyActions(),
-//     };
-//   }
-
-//   try {
-//     if (action && action.startsWith("topic_")) {
-//       prompt = `Generate a detailed but concise response about ${action.replace(
-//         "topic_",
-//         ""
-//       )}
-//                 for a ${user.ageCategory} user with ${
-//         user.educationLevel
-//       } education
-//                 and ${user.privacyLevel} privacy preference.
-//                 Keep the response friendly and educational.`;
-//     } else {
-//       prompt = `Generate a personalized greeting for ${user.name}, who is a ${user.ageCategory}
-//                 with ${user.educationLevel} education and ${user.privacyLevel} privacy preference.
-//                 Include a brief explanation of how their data is protected and why we collect minimal information.
-//                 Keep it friendly and concise.`;
-//     }
-
-//     const completion = await openai.chat.completions.create({
-//       messages: [{ role: "user", content: prompt }],
-//       model: "gpt-3.5-turbo",
-//       max_tokens: 200,
-//       temperature: 0.7,
-//     });
-
-//     // Add privacy topics as conversation starters
-//     const privacyTopics = getPrivacyTopics(user.privacyLevel);
-
-//     return {
-//       message: completion.choices[0].message.content,
-//       actions: [
-//         ...privacyTopics,
-//         { label: "Update Profile", value: "update_profile" },
-//       ],
-//     };
-//   } catch (error) {
-//     console.error("OpenAI API Error:", error);
-//     return {
-//       message:
-//         "I apologize, but I'm having trouble generating a response right now. Please try again later.",
-//       actions: [
-//         { label: "Try Again", value: "retry" },
-//         { label: "Update Profile", value: "update_profile" },
-//       ],
-//     };
-//   }
-// };
-
-export const generateAIResponse = async (user, action = null) => {
-  let prompt = "";
-  let actions = [];
-
-  // Step 1: Ask for the user's name if not provided
-  if (!user.name || user.name.trim() === "") {
-    return {
-      message:
-        "Welcome! Before we begin, please note that we prioritize your privacy. We only collect essential information to provide personalized guidance. Your data is securely stored and never shared. Please tell me your name to get started.",
-      actions: [{ label: "Enter Your Name", value: "enter_name", input: true }],
-    };
-  }
-
-  // Step 2: Ask for the user's age group
-  if (user.currentStep === "age") {
-    return {
-      message:
-        "Nice to meet you, " + user.name + "! Please select your age group:",
-      actions: getAgeGroupActions(),
-    };
-  }
-
-  // Step 3: Ask for the user's education level
-  if (user.currentStep === "education") {
-    return {
-      message: "What's your education level?",
-      actions: getEducationActions(),
-    };
-  }
-
-  // Step 4: Ask for the user's privacy preference
-  if (user.currentStep === "privacy") {
-    return {
-      message:
-        "Choose your privacy preference. This helps us tailor our recommendations:\n\nLow: Basic online safety tips\nMedium: Enhanced privacy features\nHigh: Advanced security measures",
-      actions: getPrivacyActions(),
-    };
-  }
-
-  // Step 5: Generate a personalized greeting or topic-based response
-  try {
-    if (action && action.startsWith("topic_")) {
-      prompt = `Generate a detailed but concise response about ${action.replace(
-        "topic_",
-        ""
-      )} 
-                for a ${user.ageCategory} user with ${
-        user.educationLevel
-      } education 
-                and ${user.privacyLevel} privacy preference. 
-                Keep the response friendly and educational.`;
-    } else {
-      prompt = `Generate a personalized greeting for ${user.name}, who is a ${user.ageCategory} 
-                with ${user.educationLevel} education and ${user.privacyLevel} privacy preference.
-                Include a brief explanation of how their data is protected and why we collect minimal information.
-                Keep it friendly and concise.`;
-    }
-
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
-      max_tokens: 200,
-      temperature: 0.7,
-    });
-
-    // Add privacy topics as conversation starters
-    const privacyTopics = getPrivacyTopics(user.privacyLevel);
-
-    return {
-      message: completion.choices[0].message.content,
-      actions: [
-        ...privacyTopics,
-        { label: "Update Profile", value: "update_profile" },
-      ],
-    };
-  } catch (error) {
-    console.error("OpenAI API Error:", error);
-    return {
-      message:
-        "I apologize, but I'm having trouble generating a response right now. Please try again later.",
-      actions: [
-        { label: "Try Again", value: "retry" },
-        { label: "Update Profile", value: "update_profile" },
-      ],
-    };
-  }
 };

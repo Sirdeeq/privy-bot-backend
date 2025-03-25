@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import { twilioRouter } from './routes/twilio.js';
 import { webRouter } from './routes/web.js';
+import { whatsappRouter } from './routes/whatsappClient.js';
 
 // Load environment variables before any other code
 dotenv.config();
@@ -40,6 +41,7 @@ connectDB();
 
 // Routes
 app.use('/api', webRouter);
+app.use('/api/whatsapp/', whatsappRouter)
 
 // Only enable Twilio webhook if credentials are provided
 const hasTwilioCredentials = process.env.TWILIO_ACCOUNT_SID && 

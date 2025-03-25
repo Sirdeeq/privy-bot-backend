@@ -1,41 +1,47 @@
-import mongoose from 'mongoose';
+// models/User.js
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  phoneNumber: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  name: {
-    type: String,
-    default: null,
-  },
-  age: {
-    type: Number,
-    default: null,
-  },
+  name: { type: String, required: true },
   ageCategory: {
     type: String,
-    enum: ['Child', 'Teen', 'Adult', null],
-    default: null,
+    enum: [
+      "Child (0-12)",
+      "Teen (13-19)",
+      "Young Adult (20-30)",
+      "Adult (31-50)",
+      "Senior (51+)",
+    ],
   },
   educationLevel: {
     type: String,
-    enum: ['Primary', 'Secondary', 'Degree', null],
-    default: null,
+    enum: [
+      "Primary School",
+      "Secondary School",
+      "Bachelor's Degree",
+      "Master's Degree",
+      "Doctorate/PhD",
+    ],
   },
   privacyLevel: {
     type: String,
-    enum: ['Low', 'Medium', 'High', null],
-    default: null,
+    enum: ["Low", "Medium", "High"],
   },
-  currentStep: {
-    type: String,
-    enum: ['name', 'age', 'education', 'privacy', 'completed'],
-    default: 'name',
+  phoneNumber: { type: String },
+  currentStep: { type: String },
+  currentQuestion: {
+    question: String,
+    steps: [String],
+    currentStepIndex: Number,
   },
-}, {
-  timestamps: true,
+  currentQuestions: [
+    {
+      question: String,
+      steps: [String],
+    },
+  ],
+  chats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chat" }],
+  createdAt: { type: Date, default: Date.now },
 });
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model("User", userSchema);

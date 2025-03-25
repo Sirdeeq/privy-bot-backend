@@ -1,0 +1,14 @@
+2025/03/25-06:10:15.074 6d04 Reusing MANIFEST C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/25-06:10:15.075 6d04 Recovering log #1086
+2025/03/25-06:10:15.323 6d04 Reusing old log C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/001086.log 
+2025/03/25-06:10:17.760 21a0 Level-0 table #1109: started
+2025/03/25-06:10:17.828 21a0 Level-0 table #1109: 1201308 bytes OK
+2025/03/25-06:10:17.831 21a0 Delete type=0 #1086
+2025/03/25-06:10:17.837 21a0 Manual compaction at level-0 from '\x00\x8e\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x8f\x00\x00\x00' @ 0 : 0; will stop at '\x00\x8e\x00\x00\x05' @ 3060263 : 1
+2025/03/25-06:10:17.837 21a0 Compacting 1@0 + 0@1 files
+2025/03/25-06:10:17.936 21a0 Generated table #1110@0: 20765 keys, 486248 bytes
+2025/03/25-06:10:17.951 21a0 Generated table #1111@0: 1304 keys, 116498 bytes
+2025/03/25-06:10:17.951 21a0 Compacted 1@0 + 0@1 files => 602746 bytes
+2025/03/25-06:10:17.954 21a0 compacted to: files[ 0 2 18 0 0 0 0 ]
+2025/03/25-06:10:17.954 21a0 Delete type=2 #1109
+2025/03/25-06:10:17.959 21a0 Manual compaction at level-0 from '\x00\x8e\x00\x00\x05' @ 3060263 : 1 .. '\x00\x8f\x00\x00\x00' @ 0 : 0; will stop at (end)
