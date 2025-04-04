@@ -1,9 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
-import { twilioRouter } from './routes/twilio.js';
 import { webRouter } from './routes/web.js';
 import { whatsappRouter } from './routes/whatsappClient.js';
+import { metaWhatsappRouter } from './routes/metaWhatsapp.js';
 
 // Load environment variables before any other code
 dotenv.config();
@@ -41,6 +41,7 @@ connectDB();
 
 // Routes
 app.use('/api', webRouter);
+// app.use('/api', metaWhatsappRouter) 
 app.use('/api/whatsapp/', whatsappRouter)
 
 // Only enable Twilio webhook if credentials are provided
@@ -48,12 +49,6 @@ const hasTwilioCredentials = process.env.TWILIO_ACCOUNT_SID &&
                            process.env.TWILIO_AUTH_TOKEN && 
                            process.env.TWILIO_PHONE_NUMBER;
 
-if (hasTwilioCredentials) {
-  app.use('/webhook', twilioRouter);
-  console.log('Twilio webhook route enabled');
-} else {
-  console.log('Twilio webhook route disabled - missing credentials');
-}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
