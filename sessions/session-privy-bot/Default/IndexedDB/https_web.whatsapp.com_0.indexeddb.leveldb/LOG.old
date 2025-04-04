@@ -1,31 +1,3 @@
-2025/04/04-13:18:43.294 36b4 Reusing MANIFEST C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-007058
-2025/04/04-13:18:43.296 36b4 Recovering log #13462
-2025/04/04-13:18:43.357 36b4 Reusing old log C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/013462.log 
-2025/04/04-13:18:45.730 156c Level-0 table #13471: started
-2025/04/04-13:18:45.756 156c Level-0 table #13471: 427911 bytes OK
-2025/04/04-13:18:45.759 156c Delete type=0 #13462
-2025/04/04-13:18:45.763 156c Manual compaction at level-0 from '  \x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' !\x02\x00\x00\x00' @ 0 : 0; will stop at '  \x02\x00\x00\x05' @ 24581710 : 1
-2025/04/04-13:18:45.763 156c Compacting 1@0 + 1@1 files
-2025/04/04-13:18:45.819 156c Generated table #13472@0: 17382 keys, 145223 bytes
-2025/04/04-13:18:45.835 156c Generated table #13473@0: 3728 keys, 149689 bytes
-2025/04/04-13:18:45.835 156c Compacted 1@0 + 1@1 files => 294912 bytes
-2025/04/04-13:18:45.838 156c compacted to: files[ 0 2 25 0 0 0 0 ]
-2025/04/04-13:18:45.838 156c Delete type=2 #13471
-2025/04/04-13:18:45.841 156c Manual compaction at level-0 from '  \x02\x00\x00\x05' @ 24581710 : 1 .. ' !\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2025/04/04-13:18:48.085 5d24 Compacting 1@1 + 3@2 files
-2025/04/04-13:18:48.233 5d24 Generated table #13474@1: 45793 keys, 2183989 bytes
-2025/04/04-13:18:48.344 5d24 Generated table #13475@1: 22336 keys, 2209228 bytes
-2025/04/04-13:18:48.454 5d24 Generated table #13476@1: 47550 keys, 1378341 bytes
-2025/04/04-13:18:48.454 5d24 Compacted 1@1 + 3@2 files => 5771558 bytes
-2025/04/04-13:18:48.456 5d24 compacted to: files[ 0 1 25 0 0 0 0 ]
-2025/04/04-13:18:48.457 5d24 Delete type=2 #13464
-2025/04/04-13:18:48.457 5d24 Delete type=2 #13466
-2025/04/04-13:18:48.457 5d24 Delete type=2 #13467
-2025/04/04-13:18:48.457 5d24 Delete type=2 #13468
-2025/04/04-13:18:48.457 5d24 Delete type=2 #13473
-2025/04/04-13:49:27.732 44f8 Compacting 1@1 + 1@2 files
-2025/04/04-13:49:27.922 44f8 Generated table #13477@1: 16375 keys, 2003842 bytes
-2025/04/04-13:49:27.922 44f8 Compacted 1@1 + 1@2 files => 2003842 bytes
-2025/04/04-13:49:27.925 44f8 compacted to: files[ 0 0 25 0 0 0 0 ]
-2025/04/04-13:49:27.926 44f8 Delete type=2 #13453
-2025/04/04-13:49:27.927 44f8 Delete type=2 #13472
+2025/04/04-19:44:04.248 fa8 Reusing MANIFEST C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-013486
+2025/04/04-19:44:04.249 fa8 Recovering log #13696
+2025/04/04-19:44:04.268 fa8 Reusing old log C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/013696.log 

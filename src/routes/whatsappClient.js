@@ -416,6 +416,8 @@ function formatWhatsAppResponse(response) {
 //         user.currentStep = "in_conversation";
 //         await user.save();
 
+//         console.log("Selected Topic:", user.currentTopicLabel); // Debugging: Log the selected topic
+
 //         const introPrompt = `Provide a 3-sentence introduction about ${selectedTopic.label} for ${user.privacyLevel} privacy level. Focus on practical benefits.`;
 //         const aiResponse = await generateOllamaResponse(introPrompt);
 
@@ -423,86 +425,82 @@ function formatWhatsAppResponse(response) {
 //           message: `${aiResponse}\n\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. See Platform Examples\nC. Change Topic`,
 //         };
 
-//       case "in_conversation":
-//         // Ensure the user has a valid current topic
-//         if (!user.currentTopic) {
-//           user.currentStep = "topic_selection";
-//           await user.save();
-//           return {
-//             message: `Let's choose a topic first:
-//         ${formatTopicOptions(getPrivacyTopics(user.privacyLevel))}`,
+//         case "in_conversation":
+//           // First check if we have a valid currentTopic
+//           if (!user.currentTopic) {
+//             user.currentStep = "topic_selection";
+//             await user.save();
+//             return {
+//               message: `Let's choose a topic first:\n${formatTopicOptions(
+//                 getPrivacyTopics(user.privacyLevel)
+//               )}`,
+//             };
+//           }
+
+//           const convOptions = {
+//             A: "tutorial",
+//             B: "examples",
+//             C: "change_topic",
 //           };
-//         }
 
-//         const convOptions = {
-//           A: "tutorial",
-//           B: "examples",
-//           C: "change_topic",
-//         };
+//           // Normalize input to uppercase and trim whitespace
+//           const normalizedInput = userInput.trim().toUpperCase();
 
-//         const selectedAction = convOptions[userInput];
-//         console.log("Selected Action:",selectedAction)
-//         if (!selectedAction) {
-//           // Handle free-form questions
-//           const questionPrompt = `Answer this question about ${user.currentTopicLabel}: "${message}" in 2-3 sentences.`;
-//           const answer = await generateOllamaResponse(questionPrompt);
+//           // Log the selected action for debugging
+//           console.log("Normalized Input:", normalizedInput);
+//           console.log("Available Actions:", Object.keys(convOptions));
+
+//           const selectedAction = convOptions[normalizedInput];
+//           console.log("Selected Action:", selectedAction);
+
+//           if (!selectedAction) {
+//             // Handle invalid input
+//             return {
+//               message:
+//                 "Please choose a valid option:\n" +
+//                 "A. Step-by-Step Tutorial\n" +
+//                 "B. See Platform Examples\n" +
+//                 "C. Change Topic",
+//             };
+//           }
+
+//           if (selectedAction === "change_topic") {
+//             user.currentStep = "topic_selection";
+//             user.currentTopic = null;
+//             user.currentTopicLabel = null;
+//             await user.save();
+//             return {
+//               message: `Okay, let's choose a different topic:\n${formatTopicOptions(
+//                 getPrivacyTopics(user.privacyLevel)
+//               )}`,
+//             };
+//           }
+
+//           if (selectedAction === "tutorial") {
+//             const tutorialPrompt = `Provide a detailed 7-step beginner-friendly tutorial about implementing ${user.currentTopicLabel} for ${user.privacyLevel} privacy. Number each step clearly and include practical tips.`;
+//             const tutorial = await generateOllamaResponse(tutorialPrompt);
+//             return {
+//               message: `🔧 ${user.currentTopicLabel.toUpperCase()} TUTORIAL 🔧\n${tutorial}\nWhat would you like to do next?\nA. More Detailed Tutorial\nB. See Platform Examples\nC. Change Topic`,
+//             };
+//           }
+
+//           if (selectedAction === "examples") {
+//             const examplesPrompt = `Give 3 specific, practical examples of how ${user.currentTopicLabel} is implemented on Facebook, WhatsApp, and Instagram. For each platform, explain: 1) Where to find the setting, 2) How to enable it, 3) What protection it provides. Use bullet points.`;
+//             const examples = await generateOllamaResponse(examplesPrompt);
+//             return {
+//               message: `📱 ${user.currentTopicLabel.toUpperCase()} EXAMPLES 📱\n${examples}\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. More Platform Examples\nC. Change Topic`,
+//             };
+//           }
+
+//           // Fallback in case of unexpected issues
 //           return {
-//             message: `${answer}
-//         What would you like to do next?
-//         A. Step-by-Step Tutorial
-//         B. See Platform Examples
-//         C. Change Topic`,
+//             message:
+//               "Please choose a valid option:\n" +
+//               "A. Step-by-Step Tutorial\n" +
+//               "B. See Platform Examples\n" +
+//               "C. Change Topic",
 //           };
-//         }
-
-//         if (selectedAction === "tutorial") {
-//           const tutorialPrompt = `Provide a detailed 7-step beginner-friendly tutorial about implementing ${user.currentTopicLabel} for ${user.privacyLevel} privacy. Number each step clearly and include practical tips.`;
-//           const tutorial = await generateOllamaResponse(tutorialPrompt);
-//           return {
-//             message: `🔧 ${user.currentTopicLabel.toUpperCase()} TUTORIAL 🔧
-//         ${tutorial}
-//         What would you like to do next?
-//         A. More Detailed Tutorial
-//         B. See Platform Examples
-//         C. Change Topic`,
-//           };
-//         }
-
-//         if (selectedAction === "change_topic") {
-//           user.currentStep = "topic_selection";
-//           user.currentTopic = null;
-//           user.currentTopicLabel = null;
-//           await user.save();
-//           return {
-//             message: `Okay, let's choose a different topic:
-//         ${formatTopicOptions(getPrivacyTopics(user.privacyLevel))}`,
-//           };
-//         }
-
-      
-
-//         if (selectedAction === "examples") {
-//           const examplesPrompt = `Give 3 specific, practical examples of how ${user.currentTopicLabel} is implemented on Facebook, WhatsApp, and Instagram. For each platform, explain: 1) Where to find the setting, 2) How to enable it, 3) What protection it provides. Use bullet points.`;
-//           const examples = await generateOllamaResponse(examplesPrompt);
-//           return {
-//             message: `📱 ${user.currentTopicLabel.toUpperCase()} EXAMPLES 📱
-//         ${examples}
-//         What would you like to do next?
-//         A. Step-by-Step Tutorial
-//         B. More Platform Examples
-//         C. Change Topic`,
-//           };
-//         }
-
-//         return {
-//           message:
-//             "Please choose a valid option:\n" +
-//             "A. Step-by-Step Tutorial\n" +
-//             "B. See Platform Examples\n" +
-//             "C. Change Topic",
-//         };
-
-//       default:
+//           default:
 //         return { message: "Welcome! Please tell me your name to get started." };
 //     }
 //   } catch (error) {
@@ -513,8 +511,6 @@ function formatWhatsAppResponse(response) {
 //     };
 //   }
 // };
-
-// Update the generateOllamaResponse function to match the web version
 
 const handleUserStep = async (user, message) => {
   try {
@@ -530,7 +526,7 @@ const handleUserStep = async (user, message) => {
         if (!userInput) {
           return { message: "Please provide a valid name." };
         }
-        user.name = message.trim(); // Keep original casing for name
+        user.name = message.trim();
         user.currentStep = "age";
         await user.save();
         return {
@@ -610,6 +606,32 @@ const handleUserStep = async (user, message) => {
           )}`,
         };
 
+      // case "topic_selection":
+      //   const topics = getPrivacyTopics(user.privacyLevel);
+      //   const actionLetters = ["A", "B", "C", "D", "E"].slice(0, topics.length);
+      //   const selectedIndex = actionLetters.indexOf(userInput);
+
+      //   if (selectedIndex === -1 || !topics[selectedIndex]) {
+      //     return {
+      //       message: `Please select a valid topic:\n${formatTopicOptions(
+      //         topics
+      //       )}`,
+      //     };
+      //   }
+
+      //   const selectedTopic = topics[selectedIndex];
+      //   user.currentTopic = selectedTopic.value;
+      //   user.currentTopicLabel = selectedTopic.label;
+      //   user.currentStep = "in_conversation";
+      //   await user.save();
+
+      //   const introPrompt = `Provide a 3-sentence introduction about ${selectedTopic.label} for ${user.privacyLevel} privacy level. Focus on practical benefits.`;
+      //   const aiResponse = await generateOllamaResponse(introPrompt);
+
+      //   return {
+      //     message: `${aiResponse}\n\nReply with:\n1. For step-by-step tutorial\n2. To see platform examples\n3. To change topic`,
+      //   };
+
       case "topic_selection":
         const topics = getPrivacyTopics(user.privacyLevel);
         const actionLetters = ["A", "B", "C", "D", "E"].slice(0, topics.length);
@@ -624,94 +646,102 @@ const handleUserStep = async (user, message) => {
         }
 
         const selectedTopic = topics[selectedIndex];
-        user.currentTopic = selectedTopic.value;
-        user.currentTopicLabel = selectedTopic.label; // Store the label too
-        user.currentStep = "in_conversation";
-        await user.save();
 
-        console.log("Selected Topic:", user.currentTopicLabel); // Debugging: Log the selected topic
+        // Update the user with topic information
+        const updatedUser = await User.findOneAndUpdate(
+          { phoneNumber: user.phoneNumber },
+          {
+            currentTopic: selectedTopic.value,
+            currentTopicLabel: selectedTopic.label,
+            currentStep: "in_conversation",
+          },
+          { new: true }
+        );
 
         const introPrompt = `Provide a 3-sentence introduction about ${selectedTopic.label} for ${user.privacyLevel} privacy level. Focus on practical benefits.`;
         const aiResponse = await generateOllamaResponse(introPrompt);
 
         return {
-          message: `${aiResponse}\n\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. See Platform Examples\nC. Change Topic`,
+          message: `${aiResponse}\n\nReply with:\n1. For step-by-step tutorial\n2. To see platform examples\n3. To change topic`,
         };
+      case "in_conversation":
+        // First check if we have a valid currentTopic
+        const currentUser = await User.findOne({
+          phoneNumber: user.phoneNumber,
+        });
 
-        case "in_conversation":
-          // First check if we have a valid currentTopic
-          if (!user.currentTopic) {
-            user.currentStep = "topic_selection";
-            await user.save();
-            return {
-              message: `Let's choose a topic first:\n${formatTopicOptions(
-                getPrivacyTopics(user.privacyLevel)
-              )}`,
-            };
-          }
-        
-          const convOptions = {
-            A: "tutorial",
-            B: "examples",
-            C: "change_topic",
-          };
-        
-          // Normalize input to uppercase and trim whitespace
-          const normalizedInput = userInput.trim().toUpperCase();
-        
-          // Log the selected action for debugging
-          console.log("Normalized Input:", normalizedInput);
-          console.log("Available Actions:", Object.keys(convOptions));
-        
-          const selectedAction = convOptions[normalizedInput];
-          console.log("Selected Action:", selectedAction);
-        
-          if (!selectedAction) {
-            // Handle invalid input
-            return {
-              message:
-                "Please choose a valid option:\n" +
-                "A. Step-by-Step Tutorial\n" +
-                "B. See Platform Examples\n" +
-                "C. Change Topic",
-            };
-          }
-        
-          if (selectedAction === "change_topic") {
-            user.currentStep = "topic_selection";
-            user.currentTopic = null;
-            user.currentTopicLabel = null;
-            await user.save();
-            return {
-              message: `Okay, let's choose a different topic:\n${formatTopicOptions(
-                getPrivacyTopics(user.privacyLevel)
-              )}`,
-            };
-          }
-        
-          if (selectedAction === "tutorial") {
-            const tutorialPrompt = `Provide a detailed 7-step beginner-friendly tutorial about implementing ${user.currentTopicLabel} for ${user.privacyLevel} privacy. Number each step clearly and include practical tips.`;
-            const tutorial = await generateOllamaResponse(tutorialPrompt);
-            return {
-              message: `🔧 ${user.currentTopicLabel.toUpperCase()} TUTORIAL 🔧\n${tutorial}\nWhat would you like to do next?\nA. More Detailed Tutorial\nB. See Platform Examples\nC. Change Topic`,
-            };
-          }
-        
-          if (selectedAction === "examples") {
-            const examplesPrompt = `Give 3 specific, practical examples of how ${user.currentTopicLabel} is implemented on Facebook, WhatsApp, and Instagram. For each platform, explain: 1) Where to find the setting, 2) How to enable it, 3) What protection it provides. Use bullet points.`;
-            const examples = await generateOllamaResponse(examplesPrompt);
-            return {
-              message: `📱 ${user.currentTopicLabel.toUpperCase()} EXAMPLES 📱\n${examples}\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. More Platform Examples\nC. Change Topic`,
-            };
-          }
-        
+        if (!currentUser.currentTopic || !currentUser.currentTopicLabel) {
+          console.log(
+            "No current topic found in DB, returning to topic selection"
+          );
+          await User.findOneAndUpdate(
+            { phoneNumber: user.phoneNumber },
+            { currentStep: "topic_selection" }
+          );
           return {
-            message:
-              "Please choose a valid option:\n" +
-              "A. Step-by-Step Tutorial\n" +
-              "B. See Platform Examples\n" +
-              "C. Change Topic",
+            message: `Let's choose a topic first:\n${formatTopicOptions(
+              getPrivacyTopics(user.privacyLevel)
+            )}`,
           };
+        }
+
+        // Log the raw input for debugging
+        console.log("Current topic:", user.currentTopicLabel);
+        console.log("Raw user input:", message);
+
+        // Normalize input to handle numbers or text
+        const normalizedInput =
+          typeof message === "string" ? message.trim().toLowerCase() : "";
+        console.log("Normalized input:", normalizedInput);
+
+        // Handle tutorial request (1 or "tutorial")
+        if (normalizedInput === "1" || normalizedInput.includes("tutorial")) {
+          console.log("User requested tutorial for:", user.currentTopicLabel);
+          const tutorialPrompt = `Provide a detailed 7-step beginner-friendly tutorial about implementing ${user.currentTopicLabel} for ${user.privacyLevel} privacy. Number each step clearly and include practical tips.`;
+          const tutorial = await generateOllamaResponse(tutorialPrompt);
+          return {
+            message: `🔧 ${user.currentTopicLabel.toUpperCase()} TUTORIAL 🔧\n${tutorial}\n\nReply with:\n1. More detailed tutorial\n2. See platform examples\n3. Change topic`,
+          };
+        }
+
+        // Handle examples request (2 or "examples")
+        if (normalizedInput === "2" || normalizedInput.includes("example")) {
+          console.log("User requested examples for:", user.currentTopicLabel);
+          const examplesPrompt = `Give 3 specific, practical examples of how ${user.currentTopicLabel} is implemented on Facebook, WhatsApp, and Instagram. For each platform, explain: 1) Where to find the setting, 2) How to enable it, 3) What protection it provides. Use bullet points.`;
+          const examples = await generateOllamaResponse(examplesPrompt);
+          return {
+            message: `📱 ${user.currentTopicLabel.toUpperCase()} EXAMPLES 📱\n${examples}\n\nReply with:\n1. Step-by-step tutorial\n2. More platform examples\n3. Change topic`,
+          };
+        }
+
+        // Handle topic change request (3 or "change")
+        if (
+          normalizedInput === "3" ||
+          normalizedInput.includes("change") ||
+          normalizedInput.includes("topic")
+        ) {
+          console.log("User requested topic change");
+          user.currentStep = "topic_selection";
+          user.currentTopic = null;
+          user.currentTopicLabel = null;
+          await user.save();
+          return {
+            message: `Okay, let's choose a different topic:\n${formatTopicOptions(
+              getPrivacyTopics(user.privacyLevel)
+            )}`,
+          };
+        }
+
+        // If we get here, treat as a question about the current topic
+        console.log(
+          "Treating input as question about current topic:",
+          user.currentTopicLabel
+        );
+        const questionPrompt = `Answer this question about ${user.currentTopicLabel} for ${user.privacyLevel} privacy level: "${message}" in 2-3 sentences.`;
+        const answer = await generateOllamaResponse(questionPrompt);
+        return {
+          message: `${answer}\n\nReply with:\n1. Step-by-step tutorial\n2. See platform examples\n3. Change topic`,
+        };
       default:
         return { message: "Welcome! Please tell me your name to get started." };
     }

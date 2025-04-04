@@ -32,9 +32,9 @@ const userSchema = new mongoose.Schema({
     enum: ["Low", "Medium", "High"]
   },
   currentStep: { type: String },
+  currentTopic: { type: String },  
+  currentTopicLabel: { type: String },  
   createdAt: { type: Date, default: Date.now }
 }, { _id: true });
-
-
 
 export const User = mongoose.model("User", userSchema);
