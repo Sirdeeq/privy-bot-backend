@@ -25,6 +25,7 @@ let lastQrGenerated = null;
 let sessionExpiryTimer = null;
 
 // Initialize WhatsApp client
+// Update your WhatsApp client initialization
 const whatsappClient = new Client({
   authStrategy: new LocalAuth({
     clientId: "privy-bot",
@@ -37,12 +38,28 @@ const whatsappClient = new Client({
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-software-rasterizer",
+      "--disable-extensions",
+      "--disable-background-networking",
+      "--disable-default-apps",
+      "--disable-sync",
+      "--disable-translate",
+      "--disable-notifications",
+      "--disable-logging",
+      "--disable-dev-tools",
+      "--single-process",
+      "--no-first-run",
+      "--mute-audio",
+      "--hide-scrollbars",
+      "--ignore-certificate-errors",
     ],
   },
   takeoverOnConflict: true,
-  takeoverTimeoutMs: 5000,
-  qrMaxRetries: 5,
-  qrTimeoutMs: 60000,
+  takeoverTimeoutMs: 30000, 
+  qrMaxRetries: 10,
+  qrTimeoutMs: 120000,
+  sessionTimeoutMs: 86400000, 
 });
 
 // Helper function to send direct message
@@ -303,215 +320,6 @@ function formatWhatsAppResponse(response) {
   return message;
 }
 
-// const handleUserStep = async (user, message) => {
-//   try {
-//     console.log("Current Step:", user.currentStep);
-//     console.log(`Processing step: ${user.currentStep}, Message: ${message}`);
-
-//     // Ensure message is a string and trim it
-//     const userInput =
-//       typeof message === "string" ? message.trim().toUpperCase() : "";
-
-//     switch (user.currentStep) {
-//       case "name":
-//         if (!userInput) {
-//           return { message: "Please provide a valid name." };
-//         }
-//         user.name = message.trim(); // Keep original casing for name
-//         user.currentStep = "age";
-//         await user.save();
-//         return {
-//           message: `Nice to meet you, ${
-//             user.name
-//           }! Please tell me your age:\n${getAgeGroupOptions()}`,
-//         };
-
-//       case "age":
-//         const age = parseInt(message);
-//         const ageMapping = { A: 10, B: 16, C: 25 };
-//         const selectedAge = isNaN(age) ? ageMapping[userInput] : age;
-
-//         if (!selectedAge) {
-//           return {
-//             message:
-//               "Please enter a valid age (or select an age group):\n" +
-//               getAgeGroupOptions(),
-//           };
-//         }
-
-//         user.age = selectedAge;
-//         user.ageCategory =
-//           user.age <= 12 ? "Child" : user.age <= 19 ? "Teen" : "Adult";
-//         user.currentStep = "education";
-//         await user.save();
-//         return {
-//           message: "What is your education level?\n" + getEducationOptions(),
-//         };
-
-//       case "education":
-//         const educationMapping = {
-//           A: "Primary",
-//           B: "Secondary",
-//           C: "Degree",
-//           D: "Masters",
-//           E: "PhD",
-//         };
-//         const selectedEducation = educationMapping[userInput];
-
-//         if (!selectedEducation) {
-//           return {
-//             message:
-//               "Please select a valid education level:\n" +
-//               getEducationOptions(),
-//           };
-//         }
-
-//         user.educationLevel = selectedEducation;
-//         user.currentStep = "privacy";
-//         await user.save();
-//         return {
-//           message:
-//             "What privacy level would you prefer (Low, Medium, High)?\n" +
-//             getPrivacyOptions(),
-//         };
-
-//       case "privacy":
-//         const privacyMapping = { A: "Low", B: "Medium", C: "High" };
-//         const selectedPrivacy = privacyMapping[userInput];
-
-//         if (!selectedPrivacy) {
-//           return {
-//             message:
-//               "Please select a valid privacy level:\n" + getPrivacyOptions(),
-//           };
-//         }
-
-//         user.privacyLevel = selectedPrivacy;
-//         user.currentStep = "topic_selection";
-//         await user.save();
-//         return {
-//           message: `Thank you! Based on your ${
-//             user.privacyLevel
-//           } privacy level, here are some topics we can discuss:\n${formatTopicOptions(
-//             getPrivacyTopics(user.privacyLevel)
-//           )}`,
-//         };
-
-//       case "topic_selection":
-//         const topics = getPrivacyTopics(user.privacyLevel);
-//         const actionLetters = ["A", "B", "C", "D", "E"].slice(0, topics.length);
-//         const selectedIndex = actionLetters.indexOf(userInput);
-
-//         if (selectedIndex === -1 || !topics[selectedIndex]) {
-//           return {
-//             message: `Please select a valid topic:\n${formatTopicOptions(
-//               topics
-//             )}`,
-//           };
-//         }
-
-//         const selectedTopic = topics[selectedIndex];
-//         user.currentTopic = selectedTopic.value;
-//         user.currentTopicLabel = selectedTopic.label; // Store the label too
-//         user.currentStep = "in_conversation";
-//         await user.save();
-
-//         console.log("Selected Topic:", user.currentTopicLabel); // Debugging: Log the selected topic
-
-//         const introPrompt = `Provide a 3-sentence introduction about ${selectedTopic.label} for ${user.privacyLevel} privacy level. Focus on practical benefits.`;
-//         const aiResponse = await generateOllamaResponse(introPrompt);
-
-//         return {
-//           message: `${aiResponse}\n\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. See Platform Examples\nC. Change Topic`,
-//         };
-
-//         case "in_conversation":
-//           // First check if we have a valid currentTopic
-//           if (!user.currentTopic) {
-//             user.currentStep = "topic_selection";
-//             await user.save();
-//             return {
-//               message: `Let's choose a topic first:\n${formatTopicOptions(
-//                 getPrivacyTopics(user.privacyLevel)
-//               )}`,
-//             };
-//           }
-
-//           const convOptions = {
-//             A: "tutorial",
-//             B: "examples",
-//             C: "change_topic",
-//           };
-
-//           // Normalize input to uppercase and trim whitespace
-//           const normalizedInput = userInput.trim().toUpperCase();
-
-//           // Log the selected action for debugging
-//           console.log("Normalized Input:", normalizedInput);
-//           console.log("Available Actions:", Object.keys(convOptions));
-
-//           const selectedAction = convOptions[normalizedInput];
-//           console.log("Selected Action:", selectedAction);
-
-//           if (!selectedAction) {
-//             // Handle invalid input
-//             return {
-//               message:
-//                 "Please choose a valid option:\n" +
-//                 "A. Step-by-Step Tutorial\n" +
-//                 "B. See Platform Examples\n" +
-//                 "C. Change Topic",
-//             };
-//           }
-
-//           if (selectedAction === "change_topic") {
-//             user.currentStep = "topic_selection";
-//             user.currentTopic = null;
-//             user.currentTopicLabel = null;
-//             await user.save();
-//             return {
-//               message: `Okay, let's choose a different topic:\n${formatTopicOptions(
-//                 getPrivacyTopics(user.privacyLevel)
-//               )}`,
-//             };
-//           }
-
-//           if (selectedAction === "tutorial") {
-//             const tutorialPrompt = `Provide a detailed 7-step beginner-friendly tutorial about implementing ${user.currentTopicLabel} for ${user.privacyLevel} privacy. Number each step clearly and include practical tips.`;
-//             const tutorial = await generateOllamaResponse(tutorialPrompt);
-//             return {
-//               message: `🔧 ${user.currentTopicLabel.toUpperCase()} TUTORIAL 🔧\n${tutorial}\nWhat would you like to do next?\nA. More Detailed Tutorial\nB. See Platform Examples\nC. Change Topic`,
-//             };
-//           }
-
-//           if (selectedAction === "examples") {
-//             const examplesPrompt = `Give 3 specific, practical examples of how ${user.currentTopicLabel} is implemented on Facebook, WhatsApp, and Instagram. For each platform, explain: 1) Where to find the setting, 2) How to enable it, 3) What protection it provides. Use bullet points.`;
-//             const examples = await generateOllamaResponse(examplesPrompt);
-//             return {
-//               message: `📱 ${user.currentTopicLabel.toUpperCase()} EXAMPLES 📱\n${examples}\nWhat would you like to do next?\nA. Step-by-Step Tutorial\nB. More Platform Examples\nC. Change Topic`,
-//             };
-//           }
-
-//           // Fallback in case of unexpected issues
-//           return {
-//             message:
-//               "Please choose a valid option:\n" +
-//               "A. Step-by-Step Tutorial\n" +
-//               "B. See Platform Examples\n" +
-//               "C. Change Topic",
-//           };
-//           default:
-//         return { message: "Welcome! Please tell me your name to get started." };
-//     }
-//   } catch (error) {
-//     console.error("Error handling user step:", error);
-//     return {
-//       message:
-//         "Sorry, there was an issue processing your response. Please try again.",
-//     };
-//   }
-// };
-
 const handleUserStep = async (user, message) => {
   try {
     console.log("Current Step:", user.currentStep);
@@ -605,32 +413,6 @@ const handleUserStep = async (user, message) => {
             getPrivacyTopics(user.privacyLevel)
           )}`,
         };
-
-      // case "topic_selection":
-      //   const topics = getPrivacyTopics(user.privacyLevel);
-      //   const actionLetters = ["A", "B", "C", "D", "E"].slice(0, topics.length);
-      //   const selectedIndex = actionLetters.indexOf(userInput);
-
-      //   if (selectedIndex === -1 || !topics[selectedIndex]) {
-      //     return {
-      //       message: `Please select a valid topic:\n${formatTopicOptions(
-      //         topics
-      //       )}`,
-      //     };
-      //   }
-
-      //   const selectedTopic = topics[selectedIndex];
-      //   user.currentTopic = selectedTopic.value;
-      //   user.currentTopicLabel = selectedTopic.label;
-      //   user.currentStep = "in_conversation";
-      //   await user.save();
-
-      //   const introPrompt = `Provide a 3-sentence introduction about ${selectedTopic.label} for ${user.privacyLevel} privacy level. Focus on practical benefits.`;
-      //   const aiResponse = await generateOllamaResponse(introPrompt);
-
-      //   return {
-      //     message: `${aiResponse}\n\nReply with:\n1. For step-by-step tutorial\n2. To see platform examples\n3. To change topic`,
-      //   };
 
       case "topic_selection":
         const topics = getPrivacyTopics(user.privacyLevel);
@@ -855,13 +637,33 @@ function getPrivacyOptions() {
   return ["A. Low Privacy", "B. Medium Privacy", "C. High Privacy"].join("\n");
 }
 
-// Disconnection Handler
-whatsappClient.on("disconnected", (reason) => {
+
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
+
+// Enhanced disconnection handler
+whatsappClient.on("disconnected", async (reason) => {
   console.log("Client disconnected:", reason);
   connectionStatus = "disconnected";
   clientReady = false;
   clearTimeout(sessionExpiryTimer);
-  setTimeout(() => whatsappClient.initialize().catch(console.error), 5000);
+
+  if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+    reconnectAttempts++;
+    const delay = Math.min(10000 * reconnectAttempts, 60000); // Exponential backoff max 1min
+    console.log(`Attempting reconnect in ${delay/1000} seconds...`);
+    
+    setTimeout(async () => {
+      try {
+        await whatsappClient.initialize();
+        reconnectAttempts = 0;
+      } catch (err) {
+        console.error("Reconnection failed:", err);
+      }
+    }, delay);
+  } else {
+    console.error("Max reconnection attempts reached");
+  }
 });
 
 // Authentication Failure Handler

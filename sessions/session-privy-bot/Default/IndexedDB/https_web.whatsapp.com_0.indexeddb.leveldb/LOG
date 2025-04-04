@@ -1,29 +1,27 @@
-2025/04/04-19:44:09.572 469c Reusing MANIFEST C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-013486
-2025/04/04-19:44:09.573 469c Recovering log #13696
-2025/04/04-19:44:09.602 469c Reusing old log C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/013696.log 
-2025/04/04-19:44:11.921 5d98 Level-0 table #13706: started
-2025/04/04-19:44:11.935 5d98 Level-0 table #13706: 147269 bytes OK
-2025/04/04-19:44:11.939 5d98 Delete type=0 #13696
-2025/04/04-19:44:11.944 5d98 Manual compaction at level-0 from ' >\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' ?\x02\x00\x00\x00' @ 0 : 0; will stop at ' >\x02\x00\x00\x05' @ 24838498 : 1
-2025/04/04-19:44:11.944 5d98 Compacting 1@0 + 1@1 files
-2025/04/04-19:44:11.982 5d98 Generated table #13707@0: 16914 keys, 140417 bytes
-2025/04/04-19:44:11.994 5d98 Generated table #13708@0: 1333 keys, 52867 bytes
-2025/04/04-19:44:11.994 5d98 Compacted 1@0 + 1@1 files => 193284 bytes
-2025/04/04-19:44:11.998 5d98 compacted to: files[ 0 2 28 0 0 0 0 ]
-2025/04/04-19:44:11.998 5d98 Delete type=2 #13706
-2025/04/04-19:44:12.004 5d98 Manual compaction at level-0 from ' >\x02\x00\x00\x05' @ 24838498 : 1 .. ' ?\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2025/04/04-19:44:14.378 3310 Compacting 1@1 + 6@2 files
-2025/04/04-19:44:14.521 3310 Generated table #13709@1: 44568 keys, 2183895 bytes
-2025/04/04-19:44:14.702 3310 Generated table #13710@1: 44895 keys, 2245351 bytes
-2025/04/04-19:44:14.817 3310 Generated table #13711@1: 34037 keys, 2176722 bytes
-2025/04/04-19:44:14.893 3310 Generated table #13712@1: 24895 keys, 455855 bytes
-2025/04/04-19:44:14.893 3310 Compacted 1@1 + 6@2 files => 7061823 bytes
-2025/04/04-19:44:14.899 3310 compacted to: files[ 0 1 26 0 0 0 0 ]
-2025/04/04-19:44:14.899 3310 Delete type=2 #13685
-2025/04/04-19:44:14.899 3310 Delete type=2 #13694
-2025/04/04-19:44:14.899 3310 Delete type=2 #13698
-2025/04/04-19:44:14.900 3310 Delete type=2 #13700
-2025/04/04-19:44:14.900 3310 Delete type=2 #13701
-2025/04/04-19:44:14.900 3310 Delete type=2 #13702
-2025/04/04-19:44:14.900 3310 Delete type=2 #13703
-2025/04/04-19:44:14.900 3310 Delete type=2 #13708
+2025/04/04-20:59:33.586 47f8 Reusing MANIFEST C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-013486
+2025/04/04-20:59:33.586 47f8 Recovering log #13761
+2025/04/04-20:59:33.619 47f8 Reusing old log C:\Users\HP\Documents\project\sessions\session-privy-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/013761.log 
+2025/04/04-20:59:35.949 4ea0 Level-0 table #13771: started
+2025/04/04-20:59:35.961 4ea0 Level-0 table #13771: 138820 bytes OK
+2025/04/04-20:59:35.965 4ea0 Delete type=0 #13761
+2025/04/04-20:59:35.968 4ea0 Manual compaction at level-0 from ' F\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' G\x02\x00\x00\x00' @ 0 : 0; will stop at ' F\x02\x00\x00\x05' @ 24945506 : 1
+2025/04/04-20:59:35.968 4ea0 Compacting 1@0 + 1@1 files
+2025/04/04-20:59:36.009 4ea0 Generated table #13772@0: 16118 keys, 134463 bytes
+2025/04/04-20:59:36.018 4ea0 Generated table #13773@0: 1308 keys, 54392 bytes
+2025/04/04-20:59:36.018 4ea0 Compacted 1@0 + 1@1 files => 188855 bytes
+2025/04/04-20:59:36.021 4ea0 compacted to: files[ 0 2 26 0 0 0 0 ]
+2025/04/04-20:59:36.021 4ea0 Delete type=2 #13771
+2025/04/04-20:59:36.024 4ea0 Manual compaction at level-0 from ' F\x02\x00\x00\x05' @ 24945506 : 1 .. ' G\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/04/04-20:59:39.271 2f7c Compacting 1@1 + 4@2 files
+2025/04/04-20:59:39.435 2f7c Generated table #13774@1: 44537 keys, 2183764 bytes
+2025/04/04-20:59:39.660 2f7c Generated table #13775@1: 54181 keys, 2261866 bytes
+2025/04/04-20:59:39.805 2f7c Generated table #13776@1: 12594 keys, 2150761 bytes
+2025/04/04-20:59:39.958 2f7c Generated table #13777@1: 51838 keys, 1053104 bytes
+2025/04/04-20:59:39.958 2f7c Compacted 1@1 + 4@2 files => 7649495 bytes
+2025/04/04-20:59:39.960 2f7c compacted to: files[ 0 1 26 0 0 0 0 ]
+2025/04/04-20:59:39.961 2f7c Delete type=2 #13763
+2025/04/04-20:59:39.961 2f7c Delete type=2 #13765
+2025/04/04-20:59:39.961 2f7c Delete type=2 #13766
+2025/04/04-20:59:39.961 2f7c Delete type=2 #13767
+2025/04/04-20:59:39.962 2f7c Delete type=2 #13768
+2025/04/04-20:59:39.962 2f7c Delete type=2 #13773
